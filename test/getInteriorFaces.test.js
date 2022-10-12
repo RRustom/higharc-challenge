@@ -1,7 +1,3 @@
-const { test, assertNestedArrayEqual } = require("./framework.js");
-const {getInteriorFaces} = require("../src/getInteriorFaces.js");
-
-
 /**
  * Testing Strategy
  * 
@@ -18,6 +14,7 @@ const {getInteriorFaces} = require("../src/getInteriorFaces.js");
  * 2. # faces an edge belongs to: 0, 1, 2
  * 3. # polygons: 0, 1, >1
  * 4. vertex coordinate values: int, float
+ * 5. Node degrees: 2, >2
  * 
  * Fuzz (malformed input):
  * 
@@ -27,11 +24,24 @@ const {getInteriorFaces} = require("../src/getInteriorFaces.js");
  * 4. negative coordinates
  */
 
-const tests = () => {
+const runInteriorFacesTests = () => {
+    /**
+     * Partitions: Convex, 1 polygon, node degrees=2
+     */
+    test(
+    "a square",
+    getInteriorFaces,
+    assertNestedArrayEqual,
+    {
+        vertices: [[0, 0], [2, 0], [2, 2], [0, 2]],
+        edges: [[0, 1], [1, 2], [0, 3], [2, 3]],
+    },
+    [[0, 1, 2, 3]]
+    );
 
-    // /**
-    //  * 
-    //  */
+    /**
+     * Partitions: Convex, multiple polygons, node degrees > 2
+     */
     test(
     "a square with a chord",
     getInteriorFaces,
@@ -43,11 +53,11 @@ const tests = () => {
     [[0, 1, 2], [3, 2, 0]]
     );
 
-    // /**
-    //  *
-    //  */
+    /**
+     * Partitions: Concave, multiple polygons, node degrees > 2
+     */
     test(
-    "example 6 vertices 8 edges",
+    "example from packet",
     getInteriorFaces,
     assertNestedArrayEqual,
     {
@@ -75,7 +85,7 @@ const tests = () => {
      *
      */
     test(
-    "concave shape with neighbors",
+    "a more complex concave shape with neighbors",
     getInteriorFaces,
     assertNestedArrayEqual,
     {
@@ -84,9 +94,21 @@ const tests = () => {
     },
     [[6, 0, 1, 2], [6, 2, 3, 4], [6, 4, 5], [6, 7, 0]]
     );
-}
 
-module.exports = tests
+    /**
+     *
+     */
+    test(
+    "two triangles kissing",
+    getInteriorFaces,
+    assertNestedArrayEqual,
+    {
+        vertices: [[0, 0], [100, 0], [50, 50], [0, 100], [100, 100]],
+        edges: [[0, 2], [2, 1], [1, 4], [4, 2], [2, 3], [3, 0]],
+    },
+    [[0, 2, 3], [2, 4, 1]]
+    );
+}
 
 
 

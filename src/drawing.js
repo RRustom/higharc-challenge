@@ -30,7 +30,7 @@ function drawVertex(index, x, y) {
     attrs: {
       id: index,
       cx: x,
-      cy: y,
+      cy: 500 / 2 - y,
       r: 4,
       stroke: "red",
       fill: "red",
@@ -44,7 +44,7 @@ function drawVertex(index, x, y) {
     attrs: {
       id: `label-${index}`,
       x: x + 8,
-      y: y,
+      y: 500 / 2 - y,
       fontSize: "24px",
       transform: `translate(${50}, ${50})`,
     },
@@ -61,17 +61,13 @@ function drawFaces(faces, vertices) {
 
   for (var i = 0; i < faces.length; i++) {
     const face = faces[i];
-    console.log("face: ", face);
     let points = "";
 
     // convert face into a polygon string
     for (const vIndex of face) {
       const vertex = vertices[vIndex];
-      console.log("  vertex: ", vertex);
-      points += `${vertex[0]}, ${vertex[1]} `;
+      points += `${vertex[0]}, ${500 / 2 - vertex[1]} `;
     }
-
-    console.log("points: ", points);
 
     let polygon = createSVG({
       type: "polygon",
@@ -103,9 +99,9 @@ function drawGraph(vertices, edges) {
         stroke: "black",
         strokeWidth: 3,
         x1: x1 + 50,
-        y1: y1 + 50,
+        y1: 500 / 2 - y1 + 50,
         x2: x2 + 50,
-        y2: y2 + 50,
+        y2: 500 / 2 - y2 + 50,
       },
     });
     svg.appendChild(line);

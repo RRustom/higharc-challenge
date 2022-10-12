@@ -1,5 +1,3 @@
-// import { getInteriorFaces } from "./getInteriorFaces";
-
 function handleForm() {
   event.preventDefault();
   // document.querySelector("#response").innerText = null;
@@ -26,8 +24,17 @@ function handleForm() {
   // // document.querySelector("#response").append(pTag);
 }
 
+function runTests() {
+  console.log("START RUNNING TESTS");
+  runInteriorFacesTests();
+  runNeighboringFacesTests();
+}
+
 window.addEventListener("load", function () {
   document
     .querySelector("#get-faces-form")
     .addEventListener("submit", handleForm);
+
+  const runTestsButton = document.querySelector("#run-tests");
+  runTestsButton.onclick = runTests;
 });

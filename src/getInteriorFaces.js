@@ -113,5 +113,3 @@ const getAngle = (v1, v2) => {
   console.log("    normalized: ", angle);
   return angle * (180 / Math.PI);
 };
-
-module.exports = { getInteriorFaces };

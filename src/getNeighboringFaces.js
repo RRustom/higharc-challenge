@@ -5,16 +5,12 @@
  * The face identifiers might be an integer or string. Include tests (with text descriptions of the input data) demonstrating that it works.
  * Comment your code with specifics about the computational complexity of your implementation.
  *
- * @param {Array} faces Ex: [[0, 0], [2, 0], [2, 2], [0, 2]]
- * @param {Array} faceIndex Ex: [[0, 0], [2, 0], [2, 2], [0, 2]]
- * @param {Array} vertices Ex: [[0, 0], [2, 0], [2, 2], [0, 2]]
+ * @param {Array} faces Ex: [[0, 1, 2], [3, 2, 0]] (indices of vertices)
+ * @param {Array} faceIndex Ex: 0
  * @param {Array} edges Ex: [[0, 1], [1, 2], [0, 2], [0, 3], [2, 3]]
- * @returns nested array of interior faces (vertex indices) Ex: [[0, 1, 2], [3, 2, 0]]
+ * @returns array of indices of neighboring edges
  */
-function getNeighboringFaces({ faces, faceIndex, vertices, edges }) {
-  const targetFace = faces[faceIndex];
-  console.log("targetFace: ", targetFace);
-
+function getNeighboringFaces({ faces, faceIndex, edges }) {
   // worst case: O(FEV). Avg case: O(FE) ~ O(E)
   const faceEdges = new Array(faces.length);
   for (var i = 0; i < faces.length; i++) {
@@ -33,10 +29,8 @@ function getNeighboringFaces({ faces, faceIndex, vertices, edges }) {
     }
   }
 
-  console.log("faceEdges: ", faceEdges);
-
+  // worst case: O(E^2). Avg case: ~O(E)
   const overlappingEdges = [];
-
   for (var i = 0; i < faces.length; i++) {
     if (i !== faceIndex) {
       for (const edge of faceEdges[i]) {
@@ -53,13 +47,5 @@ function getNeighboringFaces({ faces, faceIndex, vertices, edges }) {
     }
   }
 
-  // const edgeToFaces = {}
-
-  // for (const edge of edges) {
-
-  // }
-  console.log("overlappingEdges: ", overlappingEdges);
   return overlappingEdges;
 }
-
-module.exports = { getNeighboringFaces };

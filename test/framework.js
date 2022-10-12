@@ -69,9 +69,3 @@ function test(desc, fn, assertion, inputs, expected) {
     console.error(error);
   }
 }
-
-module.exports = {
-  assertArrayEqual,
-  assertNestedArrayEqual,
-  test,
-};
