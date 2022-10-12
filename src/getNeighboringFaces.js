@@ -5,6 +5,9 @@
  * The face identifiers might be an integer or string. Include tests (with text descriptions of the input data) demonstrating that it works.
  * Comment your code with specifics about the computational complexity of your implementation.
  *
+ * Overall worst-case runtime: O(E^2)
+ * Avg-case runtime: O(E)
+ *
  * @param {Array} faces Ex: [[0, 1, 2], [3, 2, 0]] (indices of vertices)
  * @param {Array} faceIndex Ex: 0
  * @param {Array} edges Ex: [[0, 1], [1, 2], [0, 2], [0, 3], [2, 3]]
