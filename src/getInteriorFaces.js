@@ -108,21 +108,3 @@ function getAdjacencyList(vertices, edges) {
 
   return graph;
 }
-
-// https://stackoverflow.com/questions/64816766/dot-product-of-two-arrays-in-javascript
-const dotProduct = (a, b) =>
-  a.map((x, i) => a[i] * b[i]).reduce((m, n) => m + n);
-
-// https://stackoverflow.com/questions/21483999/using-atan2-to-find-angle-between-two-vectors
-const getAngle = (v1, v2) => {
-  const angle = Math.atan2(v2[1], v2[0]) - Math.atan2(v1[1], v1[0]);
-  console.log("    a: ", angle);
-
-  if (angle > Math.PI) {
-    angle -= 2 * Math.PI;
-  } else if (angle <= -Math.PI) {
-    angle += 2 * Math.PI;
-  }
-  console.log("    normalized: ", angle);
-  return angle * (180 / Math.PI);
-};
