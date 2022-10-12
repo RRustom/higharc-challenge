@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <script type="text/javascript" src="src/index.js"></script>
+    <script type="text/javascript" src="src/getInteriorFaces.js"></script>
+    <script type="text/javascript" src="src/triangle.js"></script>
+    <script type="text/javascript" src="src/drawing.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Shape Tracker</title>
+</head>
+
+<body>
+    <h3>Enter vertices and edges.</h3>
+    <form id="get-faces-form">
+        <label for="length1">Enter an array of vertices:</label>
+        <textarea id="vertices" name="vertices" cols="500" rows="3" cols="70">[[0, 0], [200, 0], [200, 200], [0, 200]]</textarea>
+        <label for="length1">Enter an array of edges:</label>
+        <textarea id="edges" name="edges" cols="500" rows="3">[[0, 1], [1, 2], [0, 2], [0, 3], [2, 3]]</textarea>
+        <button id="submit-button" type="submit">Find faces</button>
+    </form>
+    <svg width="1000" height="1000" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+</body>
+
+</html>

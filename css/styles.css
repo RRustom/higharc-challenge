@@ -1,0 +1,21 @@
+body {
+    background-color: lightblue;
+}
+
+canvas {
+    border: 1px solid black;
+}
+
+form {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 500px;
+}
+
+/* textarea {
+    text-align: left;
+} */
+
+button {
+    margin-top: 8px;
+}
