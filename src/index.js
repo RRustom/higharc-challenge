@@ -12,8 +12,9 @@ function handleForm() {
 
 function runTests() {
   console.log("START RUNNING TESTS");
-  runInteriorFacesTests();
-  runNeighboringFacesTests();
+  // runInteriorFacesTests();
+  // runNeighboringFacesTests();
+  runFaceContainingPointTests();
 }
 
 window.addEventListener("load", function () {

@@ -59,6 +59,7 @@ function assertNestedArrayEqual(arr1, arr2) {
 function test(desc, fn, assertion, inputs, expected) {
   try {
     const output = fn(inputs);
+    console.log("output: ", output);
     const result = assertion(output, expected);
     if (!result) throw "test failed";
 
