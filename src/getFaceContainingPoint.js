@@ -9,9 +9,7 @@
  * Notes:
  * - originally tried to test each face with a point-in-polygon algorithm
  * - After trying to be clever about the order of polygons to test, I found
- *  that a faster approach with complexity O(logF)
- *
- *
+ *  that a faster approach with complexity O(logV)
  *
  * @param {*} point
  * @param {*} faces
@@ -24,6 +22,11 @@ function getFaceContainingPoint({ point, faces, vertices }) {
   return getFaceContainingPointFast({ point, faces, vertices });
 }
 
+/**
+ * Standard linear scan approach
+ *
+ * Complexity: O(V)
+ */
 function getFaceContainingPointSlow({ point, faces, vertices }) {
   // perform ray casting on each face O(VF)
 
@@ -62,7 +65,6 @@ function getFaceContainingPointFast({ point, faces, vertices }) {
   let minX = 0;
   let minY = 0;
   for (const vertex of vertices) {
-    console.log("vertex: ", vertex);
     if (vertex[0] > maxX) maxX = vertex[0];
     if (vertex[0] < minX) minX = vertex[0];
     if (vertex[1] > maxY) maxY = vertex[1];
@@ -73,27 +75,27 @@ function getFaceContainingPointFast({ point, faces, vertices }) {
   maxY += 100;
   minX -= 100;
   minY -= 100;
-  console.log(
-    `bounds: minX: ${minX}, maxX: ${maxX}, minY: ${minY}, maxY: ${maxY}`
-  );
 
   // sort vertices along x axis (should be saved for future requests)
   let vertexObjects = vertices.map((v, i) => ({ x: v[0], y: v[1], id: i }));
   const sortedVertices = [...vertexObjects].sort(function (a, b) {
     return a.x - b.x;
   });
-  console.log("sorted vertices: ", sortedVertices);
 
-  const sections = [];
-  let lastVertexX = []; // avoid dups
+  const sections = [
+    {
+      startX: minX,
+      endX: sortedVertices[0].x,
+      startY: minY,
+      endY: maxY,
+      faces: new Set(),
+    },
+  ];
+  let lastVertexX = null; // avoid dups
   for (let i = 0; i < sortedVertices.length; i++) {
     const vertex = sortedVertices[i];
-    if (vertex.x === lastVertexX) continue;
     const section = {};
-    if (i == 0) {
-      section["startX"] = minX;
-      section["endX"] = vertex.x;
-    } else if (i === sortedVertices.length - 1) {
+    if (i === sortedVertices.length - 1) {
       section["startX"] = vertex.x;
       section["endX"] = maxX;
     } else {
@@ -102,53 +104,58 @@ function getFaceContainingPointFast({ point, faces, vertices }) {
     }
     section["startY"] = minY;
     section["endY"] = maxY;
-    section["faces"] = [];
+    section["faces"] = new Set();
+
+    if (section.startX === section.endX) continue;
 
     // very loose condition
     for (let faceId = 0; faceId < faces.length; faceId++) {
       const face = faces[faceId];
-      if (face.includes(vertex.id)) {
-        section["faces"].push(faceId);
+      for (const faceVertex of face) {
+        const facePoint = vertices[faceVertex];
+
+        if (section.startX <= facePoint[0] && facePoint[0] <= section.endX) {
+          if (!section["faces"].has(faceId)) section["faces"].add(faceId);
+        }
       }
     }
     sections.push(section);
     lastVertexX = vertex.x;
   }
 
-  const binarySearch = function (sections, x, start, end) {
+  const binarySearch = function (sections, point, start, end) {
     // base case
-    if (start > end) return false;
-
-    if ()
+    if (start > end) return null;
 
     // middle index
     let mid = Math.floor((start + end) / 2);
 
-    // Compare mid with given key x
-    if (arr[mid] === x) return true;
+    // point lies in the section
+    const section = sections[mid];
+    if (section.startX <= point[0] && point[0] <= section.endX) {
+      return section;
+    }
 
-    // If element at mid is greater than x,
-    // search in the left half of mid
-    if (arr[mid] > x) return recursiveFunction(arr, x, start, mid - 1);
-    // If element at mid is smaller than x,
-    // search in the right half of mid
-    else return recursiveFunction(arr, x, mid + 1, end);
+    // search left side
+    if (section.startX > point[0])
+      return binarySearch(sections, point, start, mid - 1);
+    // search right side
+    else return binarySearch(sections, point, mid + 1, end);
   };
 
   const targetSection = binarySearch(sections, point, 0, sections.length - 1);
 
+  if (!targetSection) return [];
+
   let insideFaces = [];
-  for (let i = 0; i < targetSection.faces.length; i++) {
-    const face = targetSection.faces[i];
-    const facePolygon = getFacePolygon(face, vertices);
-    const isInside = isPointInPolygon(point, facePolygon, rightMostX);
-    if (isInside) insideFaces.push(i);
-  }
+
+  targetSection.faces.forEach((face) => {
+    const facePolygon = getFacePolygon(faces[face], vertices);
+    const isInside = isPointInPolygon(point, facePolygon, maxX);
+    if (isInside) insideFaces.push(face);
+  });
 
   return insideFaces;
-
-  console.log("sections: ", sections);
-  return [];
 }
 
 /**
@@ -197,10 +204,13 @@ function isPointInPolygon(point, polygon, rightMostX) {
 
   // count intersections
   let intersections = 0;
-  for (let i = 0; i < polygon.length - 1; i++) {
-    if (doSegmentsIntersect([polygon[i], polygon[i + 1]], ray)) {
-      if (getOrientation(polygon[i], point, polygon[i + 1]) == 0) {
-        return isOnLineSegment(polygon[i], polygon[i + 1], point);
+  for (let i = 0; i < polygon.length; i++) {
+    const current = polygon[i];
+    const next = i === polygon.length - 1 ? polygon[0] : polygon[i + 1];
+
+    if (doSegmentsIntersect([current, next], ray)) {
+      if (getOrientation(current, point, next) == 0) {
+        return isOnLineSegment(current, next, point);
       }
       intersections += 1;
     }
